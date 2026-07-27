@@ -1,5 +1,7 @@
 import java.io.* ;
 import java.net.* ;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -105,10 +107,10 @@ public class Servidor extends Thread {
         String aux = "error";
         try {
             if (new File(ruta + user + ".txt").isFile()) {                      // Comprobamos si existe un fichero con el nombre del usuario
-                BufferedReader br = 
-                    new BufferedReader(new FileReader(ruta + user + ".txt"));   // Obtenemos los datos contenidos dentro del fichero (donde se almancena la contraseña) y leemos su contenido
+                BufferedReader br =
+                    new BufferedReader(new FileReader(ruta + user + ".txt"));   // Obtenemos los datos contenidos dentro del fichero (donde se almancena el hash de la contraseña) y leemos su contenido
                 aux = br.readLine();
-                if (aux.equals(pass)) {                                         // Si el password recibido es igual al leido                                    
+                if (aux.equals(hashPassword(pass))) {                           // Si el hash del password recibido es igual al almacenado
                     aux = "ok";                                                 // marcamos como ok la conexión
                 } else {
                     aux = "error";                                              // en caso contrario marcamos error
@@ -118,6 +120,27 @@ public class Servidor extends Thread {
             Servidor_Interfaz.taMensajes.setText(ex.getMessage());
         }
         return aux;                                                             // y devolvemos en forma de cadena el resultado
+    }
+
+    /**
+     * Método usado para calcular el hash SHA-256 de una contraseña, de forma
+     * que nunca se almacene ni compare en texto plano.
+     *
+     * @param pass String: contraseña en texto plano
+     * @return cadena hexadecimal con el hash SHA-256 de la contraseña
+     */
+    protected static String hashPassword(String pass) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(pass.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
     }
         
     /**
@@ -165,8 +188,13 @@ public class Servidor extends Thread {
     protected static String leerFichero(String fic) {
         String aux = "";
         try {
-            BufferedReader br = 
-                new BufferedReader(new FileReader(ruta + "tmp/" + fic));        // Creamos un Buffer para capturar los datos contenidos dentro del fichero enviado
+            File baseDir = new File(ruta + "tmp/").getCanonicalFile();          // Directorio base permitido, resuelto de forma canónica
+            File f = new File(ruta + "tmp/" + fic).getCanonicalFile();          // Fichero solicitado, resuelto de forma canónica (elimina ".." y normaliza separadores)
+            if (!f.getPath().startsWith(baseDir.getPath() + File.separator)) {  // Comprobamos que el fichero sigue dentro del directorio base
+                return aux;
+            }
+            BufferedReader br =
+                new BufferedReader(new FileReader(f));                          // Creamos un Buffer para capturar los datos contenidos dentro del fichero enviado
             String aux2;
             while((aux2 = br.readLine()) != null) {                             // lo recorremos de principio a fin
                 aux += aux2 + "\n";                                             // almacenando su contenido en una variable
