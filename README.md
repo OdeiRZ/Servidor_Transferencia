@@ -39,6 +39,10 @@ Requiere Java 7 o superior.
 
 Ejercicio académico que practica la comunicación cliente-servidor con sockets TCP en Java, implementando un protocolo de comandos propio y registro de actividad (logging) en el servidor.
 
+## Seguridad
+
+Las contraseñas de usuario se almacenaban y comparaban en texto plano; ahora se comparan por hash SHA-256. Corregido además un fallo de path traversal en el comando `TYPE`, que construía la ruta del fichero a partir de la entrada del cliente sin sanitizar y sin requerir autenticación previa.
+
 ## Licencia
 
 GPL versión 3 (ver archivo [LICENSE](LICENSE)).
