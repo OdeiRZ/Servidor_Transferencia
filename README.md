@@ -4,7 +4,7 @@ Cliente-servidor en Java por sockets TCP que simula un mini-FTP por comandos: lo
 
 ## Características
 
-- Autenticación remota: el cliente envía usuario y contraseña al servidor, que los valida contra un fichero `usuario.txt` en `src/recursos/` (usuario = nombre del fichero, contraseña = hash SHA-256 de su contenido; p. ej. `odei`/`riveiro`).
+- Autenticación remota: el cliente envía usuario y contraseña al servidor, que los valida contra un fichero `usuario.txt` en `src/recursos/` (usuario = nombre del fichero, contraseña = hash SHA-256 de su contenido; p. ej. `lorem`/`ipsum` u `odei`/`riveiro`).
 - Comando `DIR`: solicita al servidor el listado de ficheros del directorio `src/recursos/tmp/`.
 - Comando `TYPE <fichero>`: solicita al servidor el contenido de un fichero de texto concreto dentro de `tmp/`.
 - Comando `EXIT`: cierra la sesión del cliente de forma ordenada.
@@ -29,7 +29,7 @@ Cliente-servidor en Java por sockets TCP que simula un mini-FTP por comandos: lo
    ```
    java -jar dist/Cliente.jar
    ```
-3. Autentícate con un usuario de `src/recursos` (p. ej. `odei` / `riveiro`) y prueba los comandos `DIR`, `TYPE <fichero>` y `EXIT`.
+3. Autentícate con un usuario de `src/recursos` (p. ej. `lorem` / `ipsum`) y prueba los comandos `DIR`, `TYPE <fichero>` y `EXIT`.
 
 **Compilando desde el código fuente:**
 1. Abre el proyecto con NetBeans (o cualquier IDE compatible con Ant), o compílalo con `ant` desde la raíz del proyecto usando el `build.xml` incluido.
